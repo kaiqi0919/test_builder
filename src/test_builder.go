@@ -298,16 +298,35 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 	return str, uline, returncount, rubis, kana
 }
 
+// 解答用紙出力用の文字列データ
+// 合計で半角スペース40個分以内
 func outhiragana(uline string) string {
 	var str string
-	for _, r := range []rune(uline) {
+	var runeuline []rune = []rune(uline)
+	hiraganacount := HiraganaCount(uline)
+	kanji := len(runeuline) - hiraganacount
+	aspace := (40 - hiraganacount * 2) / kanji
+	
+	for _, r := range runeuline {
 		if hiragana.Ishiragana(r) {
 			str = str + string(r)
 		} else {
-			str = str + "　"
+			for i:=0; i<aspace; i++ {
+				str = str + " "
+			}
 		}
 	}
 	return str
+}
+
+func HiraganaCount(str string) int {
+	count := 0
+	for _, r := range []rune(str) {
+		if hiragana.Ishiragana(r) {
+			count++
+		}
+	}
+	return count
 }
 
 func filecreate(str string, filename string) {
