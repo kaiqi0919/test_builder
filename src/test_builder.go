@@ -169,7 +169,7 @@ func main() {
 	}
 	linebuffs := strings.Split(string(allbuff), "\n")
 
-	str, uline, returncount, rubis, kana := strcreate(ts, linebuffs)
+	str, uline, returncount, rubis, kana_yomi, kana_kaki := strcreate(ts, linebuffs)
 
 	docname := "../問題用紙"
 	for i:=1; i<100; i++ {
@@ -217,7 +217,11 @@ func main() {
 	filecreate(str, csvname)
 
 	str = ""
-	for _, a := range kana {
+	for _, a := range kana_yomi {
+		str = str + a
+		str = str + "\r\n"
+	}
+	for _, a := range kana_kaki {
 		str = str + a
 		str = str + "\r\n"
 	}
@@ -231,12 +235,13 @@ func main() {
 	filecreate(str, headername)
 }
 
-func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet, []string) {
+func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet, []string, []string) {
 	var str string
 	var uline []string = make([]string, 1024)
 	var returncount int
 	var rubis []RubiSet = make([]RubiSet, 10)
-	var kana []string
+	var kana_yomi []string
+	var kana_kaki []string
 
 	str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges.Level + " " + ts.Problems[0].Ranges.Section + "\r\n\r\n"
 	returncount = 1
@@ -244,8 +249,11 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 	for _, p := range ts.Problems {
 		r := p.Ranges
 		if r.Daimon == "漢字読み" {
-			kana = make([]string, p.Total)
+			kana_yomi = make([]string, p.Total)
+		}else if r.Daimon == "表記" {
+			kana_kaki = make([]string, p.Total)
 		}
+
 
 		var lines []CSV_one_line
 		for i, linebuff := range linebuffs {
@@ -288,14 +296,16 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 				uline[returncount] = lines[i].ULine
 				returncount = returncount + 1
 				if r.Daimon == "漢字読み" {
-					kana[j] = outhiragana(lines[i].ULine)
+					kana_yomi[j] = outhiragana(lines[i].ULine)
+				}else if r.Daimon == "表記" {
+					kana_kaki[j] = outhiragana(lines[i].Correct)
 				}
 			}
 		}
 		str = str + "\r\n\r\n"
 		returncount = returncount + 2
 	}
-	return str, uline, returncount, rubis, kana
+	return str, uline, returncount, rubis, kana_yomi, kana_kaki
 }
 
 // 解答用紙出力用の文字列データ
