@@ -12,12 +12,14 @@ import (
 // TestSet hoge
 type TestSet struct {
 	ATitle		Title		`json:"タイトル"`
+	TestType	string		`json:"テスト種類"`
 	Problems	[]Problem	`json:"問"`
 }
 
 // Title hoge
 type Title struct {
 	MainTitle	string	`json:"表題"`
+	SubTitle	string	`json:"サブタイトル"`
 }
 
 // Problem hoge
@@ -34,6 +36,7 @@ type RangeP struct {
 	Kamoku	string	`json:"科目"`
 	Daimon	string	`json:"大問"`
 	Section	string	`json:"章番号"`
+	Ease	string	`json:"難易度"`
 }
 
 func main() {
@@ -60,6 +63,7 @@ func main() {
 		fmt.Printf("    科目: %s\n", p.Ranges.Kamoku)
 		fmt.Printf("    大問: %s\n", p.Ranges.Daimon)
 		fmt.Printf("    章番号: %s\n", p.Ranges.Section)
+		fmt.Printf("    難易度: %s\n", p.Ranges.Ease)
 	}
 	fmt.Println("以上\n")
 	fmt.Println("1 + Enter を入力して続行してください。")
@@ -86,7 +90,7 @@ func main() {
 		}
 
 		fmt.Println("converting doc to docm...")
-		err3 := exec.Command("openfile.exe").Run()
+		err3 := exec.Command("openfile_comprehensive.exe").Run()
 		if err3 != nil {
 			os.Exit(1)
 		}

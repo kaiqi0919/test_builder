@@ -238,8 +238,10 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 	str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges.Level + " " + ts.Problems[0].Ranges.Section + "\r\n\r\n"
 	if ts.TestType == "記述式" {
 		str = str + "クラス　　　　　なまえ　　　　　　　　　　　　　　　あ" + "\r\n\r\n"
+		returncount = 3
+	} else {
+		returncount = 1
 	}
-	returncount = 3
 
 	for _, p := range ts.Problems {
 		r := p.Ranges
