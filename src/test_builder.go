@@ -181,18 +181,6 @@ func main() {
 	}
 	CreateDoc(docname, str)
 
-	name := "../解答用紙"
-	srcname := name + ".docm"
-	dstname := name
-	for i:=1; i<100; i++ {
-		if Exists(dstname + strconv.Itoa(i) + ".docm") {
-			continue
-		}
-		dstname = dstname + strconv.Itoa(i) + ".docm"
-		break
-	}
-	filecopy(srcname, dstname)
-
 	str = "" //初期化
 	for i:=0; i<returncount; i++ {
 		var fullsplit []string
@@ -221,11 +209,15 @@ func main() {
 		str = str + a
 		str = str + "\r\n"
 	}
+	csvname = "../etc/figure1.csv"
+	filecreate(str, csvname)
+
+	str = ""
 	for _, a := range kana_kaki {
 		str = str + a
 		str = str + "\r\n"
 	}
-	csvname = "../etc/kaitoyoshi.csv"
+	csvname = "../etc/figure2.csv"
 	filecreate(str, csvname)
 
 	t := time.Now()
@@ -244,7 +236,10 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 	var kana_kaki []string
 
 	str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges.Level + " " + ts.Problems[0].Ranges.Section + "\r\n\r\n"
-	returncount = 1
+	if ts.TestType == "記述式" {
+		str = str + "クラス　　　　　なまえ　　　　　　　　　　　　　　　あ" + "\r\n\r\n"
+	}
+	returncount = 3
 
 	for _, p := range ts.Problems {
 		r := p.Ranges
@@ -302,8 +297,8 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 				}
 			}
 		}
-		str = str + "\r\n\r\n"
-		returncount = returncount + 2
+		str = str + "\r\n"
+		returncount = returncount + 1
 	}
 	return str, uline, returncount, rubis, kana_yomi, kana_kaki
 }
@@ -315,7 +310,7 @@ func outhiragana(uline string) string {
 	var runeuline []rune = []rune(uline)
 	hiraganacount := HiraganaCount(uline)
 	kanji := len(runeuline) - hiraganacount
-	aspace := (40 - hiraganacount * 2) / kanji
+	aspace := (20 - hiraganacount * 2) / kanji
 	
 	for _, r := range runeuline {
 		if hiragana.Ishiragana(r) {
