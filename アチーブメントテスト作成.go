@@ -27,7 +27,7 @@ type Problem struct {
 	Number	int			`json:"大問番号"`
 	Format	string		`json:"大問フォーマット"`
 	Total	int			`json:"問題数"`
-	Ranges	RangeP	`json:"出題範囲"`
+	Ranges	[]RangeP	`json:"出題範囲"`
 }
 
 // RangeP hoge
@@ -58,12 +58,18 @@ func main() {
     for _, p := range ts.Problems {
 		fmt.Printf("大問%d\n", p.Number)
 		fmt.Printf("  小問数: %d\n", p.Total)
-		fmt.Printf("  出題範囲\n")
-		fmt.Printf("    レベル: %s\n", p.Ranges.Level)
-		fmt.Printf("    科目: %s\n", p.Ranges.Kamoku)
-		fmt.Printf("    大問: %s\n", p.Ranges.Daimon)
-		fmt.Printf("    章番号: %s\n", p.Ranges.Section)
-		fmt.Printf("    難易度: %s\n", p.Ranges.Ease)
+		for i, r := range p.Ranges {
+			if len(p.Ranges) == 1 {
+				fmt.Printf("  出題範囲\n")
+			} else {
+				fmt.Printf("  出題範囲 %d\n", i + 1)
+			}
+			fmt.Printf("    レベル: %s\n", r.Level)
+			fmt.Printf("    科目: %s\n", r.Kamoku)
+			fmt.Printf("    大問: %s\n", r.Daimon)
+			fmt.Printf("    章番号: %s\n", r.Section)
+			fmt.Printf("    難易度: %s\n\n", r.Ease)
+		}
 	}
 	fmt.Println("以上\n")
 	fmt.Println("1 + Enter を入力して続行してください。")

@@ -29,10 +29,10 @@ type Title struct {
 
 // Problem hoge
 type Problem struct {
-	Number	int		`json:"大問番号"`
-	Format	string	`json:"大問フォーマット"`
-	Total	int		`json:"問題数"`
-	Ranges	RangeP	`json:"出題範囲"`
+	Number	int			`json:"大問番号"`
+	Format	string		`json:"大問フォーマット"`
+	Total	int			`json:"問題数"`
+	Ranges	[]RangeP	`json:"出題範囲"`
 }
 
 // RangeP hoge
@@ -235,7 +235,7 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 	var kana_yomi []string
 	var kana_kaki []string
 
-	str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges.Level + " " + ts.Problems[0].Ranges.Section + "\r\n\r\n"
+	str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges[0].Level + " " + ts.Problems[0].Ranges[0].Section + "\r\n\r\n"
 	if ts.TestType == "記述式" {
 		str = str + "クラス　　　　　なまえ　　　　　　　　　　　　　　　あ" + "\r\n\r\n"
 		returncount = 3
@@ -244,24 +244,25 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 	}
 
 	for _, p := range ts.Problems {
-		r := p.Ranges
-		if r.Daimon == "漢字読み" {
+		rs := p.Ranges
+		if rs[0].Daimon == "漢字読み" {
 			kana_yomi = make([]string, p.Total)
-		}else if r.Daimon == "表記" {
+		}else if rs[0].Daimon == "表記" {
 			kana_kaki = make([]string, p.Total)
 		}
 
-
 		var lines []CSV_one_line
-		for i, linebuff := range linebuffs {
-			line, err := NewLine(linebuff)
-			if (err == nil) && (line.Level == r.Level || r.Level == "") &&
-			(line.Kamoku == r.Kamoku || r.Kamoku == "") && (line.Daimon == r.Daimon || r.Daimon == "") && 
-			(line.Section == r.Section || r.Section == "") && (line.Ease == r.Ease || r.Ease == "") {
-				lines = append(lines, *line)
-				fmt.Println(i)
-			}else {
-				continue
+		for _, r := range rs {
+			for i, linebuff := range linebuffs {
+				line, err := NewLine(linebuff)
+				if (err == nil) && (line.Level == r.Level || r.Level == "") &&
+				(line.Kamoku == r.Kamoku || r.Kamoku == "") && (line.Daimon == r.Daimon || r.Daimon == "") && 
+				(line.Section == r.Section || r.Section == "") && (line.Ease == r.Ease || r.Ease == "") {
+					lines = append(lines, *line)
+					fmt.Println(i)
+				}else {
+					continue
+				}
 			}
 		}
 
@@ -292,9 +293,9 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 				returncount++
 				uline[returncount] = lines[i].ULine
 				returncount = returncount + 1
-				if r.Daimon == "漢字読み" {
+				if rs[0].Daimon == "漢字読み" {
 					kana_yomi[j] = outhiragana(lines[i].ULine)
-				}else if r.Daimon == "表記" {
+				}else if rs[0].Daimon == "表記" {
 					kana_kaki[j] = outhiragana(lines[i].Correct)
 				}
 			}
