@@ -12,7 +12,7 @@ func main() {
 	fmt.Println(slice)
 
 	for _, file := range slice {
-		err := exec.Command("nkf", "-w", "--overwrite", file).Run()
+		err := exec.Command("nkf", "-w", "--overwrite", file).Run() // UTF-8に変換
 		if err != nil {
 			fmt.Println("command exec error.")
 			fmt.Println(err)
