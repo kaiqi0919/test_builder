@@ -102,8 +102,8 @@ func (line *CSV_one_line) SprintWithChoice() string {
 
 	index := randompick(4, 4)
 	var choice [4]string = [4]string{line.Correct, line.Wrong_1, line.Wrong_2, line.Wrong_3}
-	str = str + fmt.Sprintf("  ① %s ② %s ③ %s ④ %s\r\n\r\n", PaddingSizeSprint(choice[index[0]], -17), 
-		PaddingSizeSprint(choice[index[1]], -17), PaddingSizeSprint(choice[index[2]], -17), PaddingSizeSprint(choice[index[3]], -17))
+	str = str + fmt.Sprintf(" ① %s ② %s ③ %s ④ %s\r\n\r\n", PaddingSizeSprint(choice[index[0]], -14), 
+		PaddingSizeSprint(choice[index[1]], -14), PaddingSizeSprint(choice[index[2]], -14), PaddingSizeSprint(choice[index[3]], -14))
 	return str
 }
 
