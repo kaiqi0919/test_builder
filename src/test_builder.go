@@ -103,8 +103,9 @@ func (line *CSV_one_line) SprintWithChoice() string {
 	index := randompick(4, 4)
 	var choice [4]string = [4]string{line.Correct, line.Wrong_1, line.Wrong_2, line.Wrong_3}
 	capture_size := -16
-	str = str + fmt.Sprintf(" ① %s ② %s ③ %s ④ %s\r\n\r\n", PaddingSizeSprint(choice[index[0]], capture_size), 
-		PaddingSizeSprint(choice[index[1]], capture_size), PaddingSizeSprint(choice[index[2]], capture_size), PaddingSizeSprint(choice[index[3]], capture_size))
+	str = str + fmt.Sprintf(" ① %s ② %s ③ %s ④ %s\r\n\r\n", 
+		PaddingSizeSprint(choice[index[0]], capture_size), PaddingSizeSprint(choice[index[1]], capture_size), 
+		PaddingSizeSprint(choice[index[2]], capture_size), PaddingSizeSprint(choice[index[3]], capture_size))
 	return str
 }
 
@@ -184,14 +185,7 @@ func main() {
 
 	str = "" //初期化
 	for i:=0; i<returncount; i++ {
-		var fullsplit []string
-		halfsplit := strings.Split(uline[i], " ")
-		for _, word := range halfsplit {
-			fullsplit = append(fullsplit, strings.Split(word, "　")...)
-		}
-		for _, word := range fullsplit {
-			str = str + word + ","
-		}
+		str = str + uline[i]
 		str = str + "\r\n"
 	}
 	csvname = "../etc/uline.csv"
@@ -199,7 +193,7 @@ func main() {
 
 	str = "" //初期化
 	for _, rubi := range rubis {
-		str = str + rubi.Rubi
+		str = str + rubi
 		str = str + "\r\n"
 	}
 	csvname = "../etc/rubi.csv"
@@ -223,20 +217,24 @@ func main() {
 
 	t := time.Now()
 	const layout = "2006-01-02"
-	str = ts.ATitle.MainTitle + "\r\n" + t.Format(layout)
+	str = ""
+	str = str + ts.ATitle.MainTitle 
+	str = str + "\r\n" 
+	str = str + t.Format(layout)
 	headername := "../etc/header.txt"
 	filecreate(str, headername)
 }
 
-func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet, []string, []string) {
+func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []string, []string, []string) {
 	var str string
 	var uline []string = make([]string, 1024)
 	var returncount int
-	var rubis []RubiSet = make([]RubiSet, 10)
+	var rubis []string = make([]string, 1024)
 	var kana_yomi []string
 	var kana_kaki []string
 
-	str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges[0].Level + " " + ts.Problems[0].Ranges[0].Section + "\r\n\r\n"
+	str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges[0].Level 
+	str = str + " " + ts.Problems[0].Ranges[0].Section + "\r\n\r\n"
 	if ts.TestType == "記述式" {
 		str = str + "クラス　　　　　なまえ　　　　　　　　　　　　　　　あ" + "\r\n\r\n"
 		returncount = 3
@@ -280,19 +278,25 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []RubiSet
 		returncount++
 		for j, i := range numset {
 			str = str + strconv.Itoa(j+1)
+			returncount++
+			uline[returncount] = lines[i].ULine
+			
+			// []string型のrubisにすべてcsv形式で入れているが、これはよくない
+			// 構造に改良の余地あり？
+			// ex) jsonで処理するとか
+			for _, r := range lines[i].Rubis {
+				rubis[returncount] += r.Kanji
+				rubis[returncount] += "."
+				rubis[returncount] += r.Rubi
+				rubis[returncount] += ","
+			}
+			
 			if ts.TestType == "選択式" {
 				str = str + lines[i].SprintWithChoice()
-				returncount++
-				uline[returncount] = lines[i].ULine
 				returncount = returncount + 2
 	
 			} else if ts.TestType == "記述式" {
 				str = str + lines[i].SprintWithoutChoice()
-				for _, rubi := range lines[i].Rubis {
-					fmt.Println(rubi.Kanji, rubi.Rubi)
-				}
-				returncount++
-				uline[returncount] = lines[i].ULine
 				returncount = returncount + 1
 				if rs[0].Daimon == "漢字読み" {
 					kana_yomi[j] = outhiragana(lines[i].ULine)
