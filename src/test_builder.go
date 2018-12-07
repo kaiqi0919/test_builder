@@ -233,13 +233,13 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []string,
 	var kana_yomi []string
 	var kana_kaki []string
 
-	str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges[0].Level 
-	str = str + " " + ts.Problems[0].Ranges[0].Section + "\r\n\r\n"
 	if ts.TestType == "記述式" {
+		str = str + ts.ATitle.SubTitle + ts.Problems[0].Ranges[0].Level 
+		str = str + " " + ts.Problems[0].Ranges[0].Section + "\r\n\r\n"
 		str = str + "クラス　　　　　なまえ　　　　　　　　　　　　　　　あ" + "\r\n\r\n"
 		returncount = 3
 	} else {
-		returncount = 1
+		returncount = -1
 	}
 
 	for _, p := range ts.Problems {
