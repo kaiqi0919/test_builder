@@ -95,17 +95,56 @@ func NewRubiSet(str string) (*RubiSet, error) {
 	}
 	return &RubiSet{Kanji: fullspace[0], Rubi: fullspace[1]}, nil
 }
+// 仕様変更要素
+// スペースを何回も打つ人もいるかもしれないので、
+// 行内の「スペースでない文字」をカウントしてそれが2ならばルビセットを返す形にする。
 
-func (line *CSV_one_line) SprintWithChoice() string {
+
+func (line *CSV_one_line) SprintWithChoice() (string, int) {
 	var str string
 	str = str + fmt.Sprintf(". %s\r\n", line.Problem)
-
-	index := randompick(4, 4)
 	var choice [4]string = [4]string{line.Correct, line.Wrong_1, line.Wrong_2, line.Wrong_3}
-	capture_size := -16
-	str = str + fmt.Sprintf(" ① %s ② %s ③ %s ④ %s\r\n\r\n", 
+
+	capture_size_2 := 36
+	capture_size_1 := 16
+	for _, c := range choice {
+		if Length(c) > capture_size_2 {
+			str = str + SprintChoiceFourLine(choice)
+			return str, 4
+		}
+	}
+
+	for _, c := range choice {
+		if Length(c) > capture_size_1 {
+			str = str + SprintChoiceTwoLine(choice, -capture_size_2)
+			return str, 2
+		}
+	}
+	
+	str = str + SprintChoiceOneLine(choice, -capture_size_1)
+	return str, 1
+}
+
+func SprintChoiceOneLine(choice [4]string, capture_size int) string {
+	index := randompick(4, 4)
+	var str string = fmt.Sprintf(" ① %s ② %s ③ %s ④ %s\r\n\r\n", 
 		PaddingSizeSprint(choice[index[0]], capture_size), PaddingSizeSprint(choice[index[1]], capture_size), 
 		PaddingSizeSprint(choice[index[2]], capture_size), PaddingSizeSprint(choice[index[3]], capture_size))
+	return str
+}
+
+func SprintChoiceTwoLine(choice [4]string, capture_size int) string {
+	index := randompick(4, 4)
+	var str string = fmt.Sprintf(" ① %s ② %s\r\n ③ %s ④ %s\r\n\r\n", 
+		PaddingSizeSprint(choice[index[0]], capture_size), PaddingSizeSprint(choice[index[1]], capture_size), 
+		PaddingSizeSprint(choice[index[2]], capture_size), PaddingSizeSprint(choice[index[3]], capture_size))
+	return str
+}
+
+func SprintChoiceFourLine(choice [4]string) string {
+	index := randompick(4, 4)
+	var str string = fmt.Sprintf(" ① %s\r\n ② %s\r\n ③ %s\r\n ④ %s\r\n\r\n", 
+		choice[index[0]], choice[index[1]], choice[index[2]], choice[index[3]])
 	return str
 }
 
@@ -119,7 +158,7 @@ func (line *CSV_one_line) SprintWithoutChoice() string {
 // 指定文字数だけ「半角」でスペースを取った文字列を返す
 func PaddingSizeSprint(str string, size int) string {
 	var padding_str, space string
-	length := len(str) - len([]rune(str))
+	var length int = Length(str)
 	// 4byteの漢字を使ったときにそろわない（修正の必要なし）
 	if size < -length {
 		for i:=0; i< -size-length ; i++ {
@@ -137,6 +176,17 @@ func PaddingSizeSprint(str string, size int) string {
 	return padding_str
 }
 
+func Length(str string) int {
+	var i int = 0
+	for _, r := range []rune(str) {
+		if len(string(r)) == 1 {
+			i += 1
+		}
+		i += 2
+	}
+	return i
+}
+
 func CreateDoc(filename string, str string) {
     file, err := os.Create(filename)
     if err != nil {
@@ -152,6 +202,7 @@ func CreateDoc(filename string, str string) {
 // -D 漢字読み -S 1章 
 
 // go run test_builder.go "../ユーザー/アチーブメントテストセット.json"
+// go run test_builder.go "../ユーザー/期末テストセット.json"
 
 func main() {
 	path := os.Args[1]
@@ -219,6 +270,8 @@ func main() {
 	const layout = "2006-01-02"
 	str = ""
 	str = str + ts.ATitle.MainTitle 
+	str = str + "　"
+	str = str + ts.ATitle.SubTitle
 	str = str + "\r\n" 
 	str = str + t.Format(layout)
 	headername := "../etc/header.txt"
@@ -292,8 +345,9 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []string,
 			}
 			
 			if ts.TestType == "選択式" {
-				str = str + lines[i].SprintWithChoice()
-				returncount = returncount + 2
+				temp, k := lines[i].SprintWithChoice()
+				str = str + temp
+				returncount = returncount + k + 1
 	
 			} else if ts.TestType == "記述式" {
 				str = str + lines[i].SprintWithoutChoice()
