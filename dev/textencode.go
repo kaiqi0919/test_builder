@@ -7,6 +7,10 @@ import (
 	"os/exec"
 )
 
+// nkfコマンド
+// -w   UTF-8
+// -c   改行をCRLFに変換
+
 func main() {
 	slice := dirwalk("../ユーザー")
 	fmt.Println(slice)
@@ -18,7 +22,8 @@ func main() {
 			fmt.Println(err)
         }
         fmt.Printf("%s は変換されました\n", file)
-	}
+    }
+    fmt.Println(len(slice))
 }
 
 func dirwalk(dir string) []string {
