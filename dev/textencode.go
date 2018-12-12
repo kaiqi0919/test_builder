@@ -12,7 +12,7 @@ import (
 // -c   改行をCRLFに変換
 
 func main() {
-	slice := dirwalk("../ユーザー")
+	slice := dirwalk("../ユーザー/データベース/N3 復習")
 	fmt.Println(slice)
 
 	for _, file := range slice {

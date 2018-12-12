@@ -16,6 +16,7 @@ import (
 
 // TestSet hoge
 type TestSet struct {
+	Date		string		`json:"実施日"`
 	ATitle		Title		`json:"タイトル"`
 	TestType	string		`json:"テスト種類"`
 	Problems	[]Problem	`json:"問"`
@@ -273,7 +274,12 @@ func main() {
 	str = str + "　"
 	str = str + ts.ATitle.SubTitle
 	str = str + "\r\n" 
-	str = str + t.Format(layout)
+	if ts.Date == "" {
+		str = str + t.Format(layout)
+	} else {
+		str = str + ts.Date
+	}
+
 	headername := "../etc/header.txt"
 	filecreate(str, headername)
 }

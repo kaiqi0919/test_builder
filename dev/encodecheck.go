@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	slice := dirwalk("../ユーザー")
+	slice := dirwalk("../ユーザー/データベース/N3 復習")
 	fmt.Println(slice)
 	count := 0
 	filestyle := "UTF-8"

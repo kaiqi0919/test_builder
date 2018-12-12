@@ -11,6 +11,7 @@ import (
 
 // TestSet hoge
 type TestSet struct {
+	Date		string		`json:"実施日"`
 	ATitle		Title		`json:"タイトル"`
 	TestType	string		`json:"テスト種類"`
 	Problems	[]Problem	`json:"問"`
@@ -43,7 +44,7 @@ func main() {
 	fmt.Println("loading format...")
 	fmt.Println("以下の内容でテストを作成します。")
 	fmt.Println("")
-	path := "./ユーザー/期末テストセット.json"
+	path := "./ユーザー/期末テストセット_3d.json"
 	raw, err := ioutil.ReadFile(path)
     if err != nil {
         fmt.Println(err.Error())
@@ -54,7 +55,8 @@ func main() {
 	json.Unmarshal(raw, &ts)
 
 	fmt.Printf("タイトル: %s\n", ts.ATitle.MainTitle)
-
+	fmt.Printf("実施日: %s\n", ts.Date)
+	
     for _, p := range ts.Problems {
 		fmt.Printf("大問%d\n", p.Number)
 		fmt.Printf("  小問数: %d\n", p.Total)
