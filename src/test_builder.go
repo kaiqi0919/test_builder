@@ -334,7 +334,7 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []string,
 		fmt.Println(numset)
 
 		str = str + p.Format + "\r\n"
-		returncount++
+		returncount += 2
 		for j, i := range numset {
 			str = str + strconv.Itoa(j+1)
 			returncount++
