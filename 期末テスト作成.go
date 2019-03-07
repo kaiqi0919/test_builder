@@ -44,7 +44,7 @@ func main() {
 	fmt.Println("loading format...")
 	fmt.Println("以下の内容でテストを作成します。")
 	fmt.Println("")
-	path := "./ユーザー/N4_9章セット.json"
+	path := "./ユーザー/期末テストセット_1b1c.json"
 	raw, err := ioutil.ReadFile(path)
     if err != nil {
         fmt.Println(err.Error())

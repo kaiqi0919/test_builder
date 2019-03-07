@@ -334,7 +334,11 @@ func strcreate(ts TestSet, linebuffs []string) (string, []string, int, []string,
 		fmt.Println(numset)
 
 		str = str + p.Format + "\r\n"
-		returncount += 2
+		if ts.TestType == "選択式" {
+			returncount += 2
+		} else if ts.TestType == "記述式" {
+			returncount += 1
+		}
 		for j, i := range numset {
 			str = str + strconv.Itoa(j+1)
 			returncount++
