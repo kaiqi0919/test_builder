@@ -44,7 +44,7 @@ func main() {
 	fmt.Println("loading format...")
 	fmt.Println("以下の内容でテストを作成します。")
 	fmt.Println("")
-	path := "./ユーザー/期末テストセット_1b1c.json"
+	path := "./ユーザー/期末テストセット_3a.json"
 	raw, err := ioutil.ReadFile(path)
     if err != nil {
         fmt.Println(err.Error())
@@ -92,8 +92,12 @@ func main() {
 		
 		fmt.Println("building doc...")
 		pathfromsrc := "." + path
-		err2 := exec.Command("test_checker.exe", pathfromsrc).Run()
+		err2 := exec.Command("test_builder.exe", pathfromsrc).Run()
 		if err2 != nil {
+			fmt.Println("error")
+			fmt.Println(pathfromsrc)
+			time.Sleep(1*time.Second)
+			
 			os.Exit(1)
 		}
 
